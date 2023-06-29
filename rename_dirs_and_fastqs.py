@@ -12,7 +12,7 @@ if __name__ == "__main__":
         d = os.path.join(rootdir, file)
         if os.path.isdir(d):
             elements = d.split('.')
-            sys.stdout.write(f"Renaming Directory {d} to {elements[-1]}")
+            sys.stdout.write(f"Renaming Directory {d} to {elements[-1]}\n")
             os.chdir(d)
             fastqs = glob.glob('*_R1.fastq.gz')
             for fastq1 in fastqs:
