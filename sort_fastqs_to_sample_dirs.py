@@ -17,6 +17,6 @@ if __name__ == "__main__":
 
         os.mkdir(sample_id)
         shutil.move(fastq1, f"{sample_id}/{fastq1}")
-        shutil.move(fastq1, f"{sample_id}/{fastq2}")
-        shutil.move(fastq1, f"{sample_id}/{index1}")
-        shutil.move(fastq1, f"{sample_id}/{index2}")
+        shutil.move(fastq2, f"{sample_id}/{fastq2}")
+        shutil.move(index1, f"{sample_id}/{index1}")
+        shutil.move(index2, f"{sample_id}/{index2}")
