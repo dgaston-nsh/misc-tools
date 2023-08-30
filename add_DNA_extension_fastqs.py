@@ -11,6 +11,7 @@ if __name__ == "__main__":
     for file in os.listdir(rootdir):
         d = os.path.join(rootdir, file)
         if os.path.isdir(d):
+            os.chdir(d)
             fastqs = glob.glob('*.R1.fastq.gz')
             for fastq1 in fastqs:
                 elements = fastq1.split('.')

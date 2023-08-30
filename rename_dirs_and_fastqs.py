@@ -12,7 +12,6 @@ if __name__ == "__main__":
         d = os.path.join(rootdir, file)
         if os.path.isdir(d):
             elements = file.split('_')
-            print(elements)
             new_dir = os.path.join(rootdir, elements[1])
             sys.stdout.write(f"Renaming Directory {d} to {new_dir}\n")
             os.rename(d, new_dir)
