@@ -18,8 +18,8 @@ if __name__ == "__main__":
                 sample_id = elements[0]
                 fastq2 = f"{sample_id}.R2.fastq.gz"
 
-                sys.stdout.write(f"Renaming {fastq1} to {sample_id}_S.R1_001.fastq.gz\n")
-                # os.rename(fastq1, f"{sample_id}-DNA.R1.fastq.gz")
+                sys.stdout.write(f"Renaming {fastq1} to {sample_id}_SN.R1_001.fastq.gz\n")
+                os.rename(fastq1, f"{sample_id}_SN.R1_001.fastq.gz")
 
-                sys.stdout.write(f"Renaming {fastq2} to {sample_id}_S.R2_001.fastq.gz\n")
-                # os.rename(fastq2, f"{sample_id}-DNA.R2.fastq.gz")
+                sys.stdout.write(f"Renaming {fastq2} to {sample_id}_SN.R2_001.fastq.gz\n")
+                os.rename(fastq2, f"{sample_id}_SN.R2_001.fastq.gz")
