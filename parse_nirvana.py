@@ -6,50 +6,33 @@ import gzip
 import json
 import argparse
 
+import nirvana
+
 import pandas as pd
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('-i', '--input', help="Input JSON file to read")
+    parser.add_argument('-o', '--output', help="Output filename")
     args = parser.parse_args()
     args.logLevel = "INFO"
 
-    header = ''
-    positions = []
-    genes = []
+    header = "SampleID\tVarID\tGene\tg.HGVS\tc.HGVS\tp.HGVS\t"
 
-    is_header_line = True
-    is_position_line = False
-    is_gene_line = False
-
-    gene_section_line = '],"genes":['
-    end_line = ']}'
-
-    with gzip.open(args.input, 'rt') as f:
-        position_count = 0
-        gene_count = 0
-
-        for line in f:
-            trimmed_line = line.strip()
-            if is_header_line:
-                header = trimmed_line[10:-14]
-                is_header_line = False
-                is_position_line = True
-                continue
-            if trimmed_line == gene_section_line:
-                is_gene_line = True
-                is_position_line = False
-                continue
-            elif trimmed_line == end_line:
-                break
-            else:
-                if is_position_line:
-                    positions.append(trimmed_line.rstrip(','))
-                    position_count += 1
-                if is_gene_line:
-                    genes.append(trimmed_line.rstrip(','))
-                    gene_count += 1
-
-    print ('header object:', header)
-    print ('number of positions:', position_count)
-    print ('number of genes:', gene_count)
+    data = nirvana.parseNirvana(args.input)
+    with open(args.output, 'w') as outfile:
+        outfile.write(f"{header}\n")
+        for position in data['positions']:
+            if variants_field in position_dict:
+                for var_dict in position_dict[variants_field]:
+                    if 'clinvar' in var_dict:
+                        #clinvar stuff
+                    if 'cosmic' in var_dict:
+                        #cosmic stuff
+                    if 'gnomad' in var_dict:
+                        #GnomAD stuff
+                    varid = f"{position['chromosome']}-{position['position']}-{position['refAllele']}-{var_dict['altAllele']}"
+                    outfile.write(f"{data['samples'][0]}\t")
+                    outfile.write(f"{varid}\t")
+                    outfile.write(f"{var_dict['']}\t")
+                    outfile.write(f"{var_dict['hgvsg']}\t")
