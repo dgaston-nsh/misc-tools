@@ -23,14 +23,23 @@ if __name__ == "__main__":
     with open(args.output, 'w') as outfile:
         outfile.write(f"{header}\n")
         for position in data['positions']:
-            if variants_field in position_dict:
-                for var_dict in position_dict[variants_field]:
+            if 'variants' in position_dict:
+                for var_dict in position_dict['variants']:
                     if 'clinvar' in var_dict:
                         #clinvar stuff
                     if 'cosmic' in var_dict:
                         #cosmic stuff
                     if 'gnomad' in var_dict:
                         #GnomAD stuff
+                    if 'gnomadExome' in var_dict:
+                        #Other GnomAD stuff
+                    if 'dbsnp' in var_dict:
+                        #dbsnp stuff
+
+                    if 'transcripts' in var_dict:
+                        for transcrip_dict in var_dict['transcripts']:
+                            # Check if Transcript is in MANE + Clinical and Output
+
                     varid = f"{position['chromosome']}-{position['position']}-{position['refAllele']}-{var_dict['altAllele']}"
                     outfile.write(f"{data['samples'][0]}\t")
                     outfile.write(f"{varid}\t")
