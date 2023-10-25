@@ -41,6 +41,6 @@ def parseNirvana(file):
                     data['positions'].append(position_dict)
                     data['position_count'] += 1
                 if is_gene_line:
-                    genes.append(trimmed_line.rstrip(','))
+                    data['genes'].append(trimmed_line.rstrip(','))
                     data['gene_count'] += 1
     return data
