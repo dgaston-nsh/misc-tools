@@ -25,7 +25,7 @@ if __name__ == "__main__":
     \tgnomadAF\tgnomadFailedFilter?\tTopmedAF\tPolyPhen\tSIFT\tDANN\tGERP\tREVEL\n"
 
     sys.stdout.write(f"Parsing JSON structure of file {args.input}\n")
-    data = nirvana.parseNirvana(json_file)
+    data = nirvana.parseNirvana(args.input)
     sys.stdout.write("Processing and parsing position data\n")
 
     positions = 0
