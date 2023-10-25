@@ -10,8 +10,6 @@ import argparse
 
 import nirvana
 
-import pandas as pd
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('-i', '--input', help="Input JSON file\n)")
