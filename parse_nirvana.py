@@ -16,20 +16,15 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('-i', '--input', help="Input JSON file\n)")
     parser.add_argument('-o', '--output', help="Output file root")
-    parser.add_argument('-m', '--mane', help="MANE transcripts list")
     args = parser.parse_args()
     args.logLevel = "INFO"
 
     header = "SampleID\tVarID\tGene\tg.HGVS\tVarType\tTranscript\tBiotype\tCodons \
     \tAminoAcids\tcDNAPos\taaPos\tcdsPos\tExons\tIntrons\tc.HGVS\tp.HGVS\tdbSNP \
     \tFILTERS\tVAFS\talleleDepths \
-    \tConsequence\tCancerResidue\tCancerNumSamples\tCancerNumAltAASamples\tCanceqValue \
-    \tClinvarIDs\tClinvarSigs\tCOSMIC_IDs \
-    \tgnomadAF\tTopmedAF\tPolyPhen\tSIFT\tDANN\tGERP\tREVEL\n"
-
-    sys.stdout.write(f"Reading list of Ensembl list of MANE transcripts from {args.mane}\n")
-    with open(args.mane, 'r') as f:
-        mane = f.read().splitlines()
+    \tConsequence\tCancerResidue\tCancerNumSamples\tCancerNumAltAASamples\tCancer_qValue \
+    \tClinvarIDs\tClinvarSigs\tCOSMIC_IDs\tCOSMIC_NumSamples \
+    \tgnomadAF\tgnomadFailedFilter?\tTopmedAF\tPolyPhen\tSIFT\tDANN\tGERP\tREVEL\n"
 
     sys.stdout.write(f"Parsing JSON structure of file {args.input}\n")
     data = nirvana.parseNirvana(json_file)
@@ -40,7 +35,6 @@ if __name__ == "__main__":
     variants_written = 0
     not_pass = 0
 
-    output_fasta = f"{args.output}_fragments.fasta"
     output_variants = f"{args.output}_variants.tsv"
 
     with open(output_variants, 'w') as outfile:
@@ -57,25 +51,18 @@ if __name__ == "__main__":
                         # if not var_dict['isDecomposedVariant']:
                         if 'transcripts' in var_dict:
                             for transcript_dict in var_dict['transcripts']:
-                                # Check if Transcript is in MANE + Clinical and Output
+                                # Check if Transcript is in Ensembl
                                 if transcript_dict['transcript'].startswith("ENST"):
-                                    elements = transcript_dict['transcript'].split('.')
-                                    transcript_id = elements[0]
-                                else:
-                                    transcript_id = transcript_dict['transcript']
-                                if transcript_id in mane:
                                     germline_rare = True
                                     if 'gnomad' in var_dict:
                                         if var_dict['gnomad']['allAf'] >= 0.005:
                                             germline_rare = False
                                     if germline_rare:
                                         variants_written += 1
-                                        varid = f"{position_dict['chromosome']}-{position_dict['position']}-{position_dict['refAllele']}-{var_dict['altAllele']}"
-
                                         outfile.write(f"{data['samples'][0]}\t")
 
                                         # Basic Variant Info
-                                        outfile.write(f"{varid}\t")
+                                        outfile.write(f"{var_dict['vid']}\t")
                                         outfile.write(f"{transcript_dict['hgnc']}\t")
                                         outfile.write(f"{var_dict['hgvsg']}\t")
                                         outfile.write(f"{var_dict['variantType']}\t")
@@ -161,9 +148,9 @@ if __name__ == "__main__":
                                             sample_counts = []
                                             for cosmic_dict in var_dict['cosmic']:
                                                 cosmic_ids.append(cosmic_dict['id'])
-                                                # sample_counts.append(cosmic_dict['sampleCount'])
+                                                sample_counts.append(cosmic_dict['numSamples'])
                                             outfile.write(f"{','.join(cosmic_ids)}\t")
-                                            # outfile.write(f"{','.join(sample_counts)}\t")
+                                            outfile.write(f"{','.join(sample_counts)}\t")
                                         else:
                                             outfile.write("-\t")
                                             # outfile.write("-\t")
@@ -171,11 +158,11 @@ if __name__ == "__main__":
                                         if 'gnomad' in var_dict:
                                             outfile.write(f"{var_dict['gnomad']['allAf']}\t")
                                             # outfile.write(f"{var_dict['gnomad']['lowComplexityRegion']}\t")
-                                            # outfile.write(f"{var_dict['gnomad']['failedFilter']}\t")
+                                            outfile.write(f"{var_dict['gnomad']['failedFilter']}\t")
                                         else:
                                             outfile.write("-\t")
                                             # outfile.write("-\t")
-                                            # outfile.write("-\t")
+                                            outfile.write("-\t")
 
                                         if 'topmed' in var_dict:
                                             outfile.write(f"{var_dict['gnomad']['allAF']}\t")
