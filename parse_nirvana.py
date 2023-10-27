@@ -33,7 +33,7 @@ if __name__ == "__main__":
         reader = csv.reader(infile, delimiter='\t')
         next(reader)
         for row in reader:
-            json_file = os.path.join(row[1], f"{row[0]}-DNA/{row[0]}-DNA_MergedVariants_Annotated.json.gz")
+            json_file = os.path.join(row[1], f"{row[1]}/{row[0]}.hard-filtered.vcf.annotated.json.gz")
             output_file = os.path.join(args.output, f"{row[0]}_CombinedVariantsFiltered.tsv")
 
             sys.stdout.write(f"Parsing JSON structure of file {json_file}\n")
