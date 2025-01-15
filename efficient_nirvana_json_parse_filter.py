@@ -100,7 +100,7 @@ def parsePopAFs(var_dict):
             try:
                 freq = float(gnomad_dict.get(pop))
             except:
-                freq = 0
+                freq = 0.0
             if freq > largest_af:
                 largest_af = freq
         afs['gnomAD_largestAF'] = largest_af
@@ -116,8 +116,8 @@ def parsePopAFs(var_dict):
 
     return afs
 
-def classify_filter(position_dict):
-    output = dict()
+def classify_filter(position_dict, ensembl_reporting_transcripts, refseq_reporting_transcripts):
+    outputs = list()
 
     var_index = 0
     allele_index = 1
@@ -128,6 +128,7 @@ def classify_filter(position_dict):
     if depth > 5:
         if 'variants' in position_dict:
             for var_dict in position_dict['variants']:
+                output = dict()
                 if 'variantFrequencies' in samples_dict:
                     vaf = float(samples_dict['variantFrequencies'][var_index])
                     if vaf >= 0.35:
@@ -170,12 +171,14 @@ def classify_filter(position_dict):
                             if 'transcripts' in var_dict:
                                 for transcript_dict in var_dict['transcripts']:
 
+                            outputs.append(output)
+
                 var_index += 1
                 allele_index += 1
 
-    return output
+    return outputs
 
-def parse_json(json_file, output_csv):
+def parse_json(json_file, output_csv, ensembl_reporting_transcripts, refseq_reporting_transcripts):
     is_header_line = True
     is_position_line = False
     is_gene_line = False
@@ -186,7 +189,11 @@ def parse_json(json_file, output_csv):
     gene_section_line = '],"genes":['
     end_line = ']}'
 
-    fieldnames = []
+    fieldnames = ['VarID', 'Depth', 'VAF', 'Filter', 'gnomAD_allAF', 'TopMed_allAF',
+                  'g.HGVS', 'phylopScore', 'dbsnp', 'PrimateAI-3D', 'REVEL',
+                  'ClinVarID', 'ClinVarSig', 'COSMIC_ID', 'COSMIC_NumSamples',
+                  'SpliceAI_accGainScore', 'SpliceAI_accLossScore', 'SpliceAI_donGainScore',
+                  'SpliceAI_donLossScore']
 
     with open(output_csv, w) as outfile:
         writer = csv.DictWriter(outfile, fieldnames=fieldnames)
@@ -212,7 +219,7 @@ def parse_json(json_file, output_csv):
             else:
                 if is_position_line:
                     position_dict = json.loads(trimmed_line.rstrip(','))
-                    output = classify_filter(position_dict)
+                    output = classify_filter(position_dict, ensembl_reporting_transcripts, refseq_reporting_transcripts)
                     if len(output) > 0:
                         writer.writerow(output)
                 if is_gene_line:
@@ -226,6 +233,15 @@ if __name__ == "__main__":
     args = parser.parse_args()
     args.logLevel = "INFO"
 
+    # Resource Files and Directory Definitions
+    resource_dir = os.path.abspath("/usr/local/illumina/runs/Resources")
+
+    mane_plus_clinical_ensembl = os.path.join(resource_dir, "mane_select_plus_clinical_ensemblIDs.txt")
+    mane_plus_clinical_refseq = os.path.join(resource_dir, "mane_select_plus_clinical_refseqIDs.txt")
+
+    ensembl_reporting_transcripts = parse_transcript_list(mane_plus_clinical_ensembl)
+    refseq_reporting_transcripts = parse_transcript_list(mane_plus_clinical_refseq)
+
     with open(args.samples, 'r') as input:
         reader = csv.DictReader(input, delimiter=',', quotechar='"')
         for row in reader:
@@ -233,4 +249,4 @@ if __name__ == "__main__":
             json_file = os.path.join(sample_output_dir, f"{row['RGSM']}.hard-filtered.vcf.annotated.json.gz")
             output_csv = os.path.join(sample_output_dir, f"{row['RGSM']}_wgs.hard-filtered.csv"")
 
-            parse_json(json_file, output_csv)
+            parse_json(json_file, output_csv, ensembl_reporting_transcripts, refseq_reporting_transcripts)
