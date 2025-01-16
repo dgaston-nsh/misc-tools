@@ -20,6 +20,6 @@ if __name__ == "__main__":
     db_connection = sqlite3.connect(f"{args.db}")
     db_cursor = db_connection.cursor()
 
-    db_cursor.execute("CREATE TABLE wgs_tumor(acc_id, external_id, cohort, sequencing_centre, coverage, status)")
+    db_cursor.execute("CREATE TABLE wgs_tumour(acc_id, external_id, cohort, sequencing_centre, coverage, status)")
     db_cursor.execute("CREATE TABLE wgs_normal(acc_id, external_id, cohort, sequencing_centre, coverage, status)")
     db_cursor.execute("CREATE TABLE transcriptome(acc_id, external_id, cohort, sequencing_centre, million_reads, status)")
