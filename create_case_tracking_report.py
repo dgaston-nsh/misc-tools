@@ -49,21 +49,24 @@ if __name__ == "__main__":
                 sys.stderr.write(f"{res[0]} Normal has mismatches in External IDs ({case_data[res[0]]['ExternalID']} and {res[1]})\n")
                 case_data[res[0]]['ExternalID'] = res[1]
         else:
-            case_data[res[0]]['ExternalID'] = res[1]
+            if res[1] != '':
+                case_data[res[0]]['ExternalID'] = res[1]
 
         if case_data[res[0]].get('Cohort') and res[2]:
             if case_data[res[0]]['Cohort'] != res[2]:
                 sys.stderr.write(f"{res[0]} Normal has mismatches in Cohort designation ({case_data[res[0]]['Cohort']} and {res[2]})\n")
                 case_data[res[0]]['Cohort'] = res[2]
         else:
-            case_data[res[0]]['Cohort'] = res[2]
+            if res[2] != '':
+                case_data[res[0]]['Cohort'] = res[2]
 
         if case_data[res[0]].get('Sequencing Centre') and res[3]:
             if case_data[res[0]]['Sequencing Centre'] != res[3]:
                 sys.stderr.write(f"{res[0]} Normal has mismatches in Sequencing Centre ({case_data[res[0]]['Sequencing Centre']} and {res[3]})\n")
                 case_data[res[0]]['Sequencing Centre'] = res[3]
         else:
-            case_data[res[0]]['Sequencing Centre'] = res[3]
+            if res[3] != '':
+                case_data[res[0]]['Sequencing Centre'] = res[3]
 
     for res in transcriptome_results:
         case_data[res[0]]['Millions of Reads'] = res[4]
@@ -74,21 +77,24 @@ if __name__ == "__main__":
                 sys.stderr.write(f"{res[0]} Transcriptome has mismatches in External IDs ({case_data[res[0]]['ExternalID']} and {res[1]})\n")
                 case_data[res[0]]['ExternalID'] = res[1]
         else:
-            case_data[res[0]]['ExternalID'] = res[1]
+            if res[1] != '':
+                case_data[res[0]]['ExternalID'] = res[1]
 
         if case_data[res[0]].get('Cohort') and res[2]:
             if case_data[res[0]]['Cohort'] != res[2]:
                 sys.stderr.write(f"{res[0]} Transcriptome has mismatches in Cohort designation ({case_data[res[0]]['Cohort']} and {res[2]})\n")
                 case_data[res[0]]['Cohort'] = res[2]
         else:
-            case_data[res[0]]['Cohort'] = res[2]
+            if res[2] != '':
+                case_data[res[0]]['Cohort'] = res[2]
 
         if case_data[res[0]].get('Sequencing Centre') and res[3]:
             if case_data[res[0]]['Sequencing Centre'] != res[3]:
                 sys.stderr.write(f"{res[0]} Transcriptome has mismatches in Sequencing Centre ({case_data[res[0]]['Sequencing Centre']} and {res[3]})\n")
                 case_data[res[0]]['Sequencing Centre'] = res[3]
         else:
-            case_data[res[0]]['Sequencing Centre'] = res[3]
+            if res[3] != '':
+                case_data[res[0]]['Sequencing Centre'] = res[3]
 
     with open(args.output, 'w') as output:
         output.write("ACC ID, External ID, Cohort, Normal Coverage (30X), Normal Status, Tumour Coverage (80X/30X), Tumour Status, Millions of Read Pairs, RNA Status, Sequencing Centre\n")
