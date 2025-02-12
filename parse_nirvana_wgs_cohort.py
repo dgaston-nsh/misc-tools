@@ -292,13 +292,13 @@ def parseNirvana(sample_id, file, output_fname, log_fname):
                                         depth = -1
                                         logfile.write(f"No Coverage vale for variant at position: {out['Chr']}-{out['Pos']}-{out['Ref']}\n")
 
-                                    if depth >= 5:
+                                    if depth >= 10:
                                         if 'variants' in position_dict:
                                             for var_dict in position_dict['variants']:
                                                 out = parseBasicVarInfo(out, var_dict, samples_dict, var_index, allele_index)
 
                                                 # Set VAF of 0.35 threshold
-                                                if out.get('VAF') >= 0.35:
+                                                if out.get('VAF') >= 0.2:
                                                     # Set the 1% Allele Frequency cutoff here using the Controls
                                                     if out.get('gnomAD_controlsAllAf') <= 0.005:
                                                         if 'transcripts' in var_dict:
