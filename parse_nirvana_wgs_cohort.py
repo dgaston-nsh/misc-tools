@@ -267,37 +267,36 @@ def parseNirvana(sample_id, file, output_fname):
                         # data['positions'].append(position_dict)
                         data['position_count'] += 1
 
-                        for position_dict in data['positions']:
-                            if len(position_dict['filters']) == 1:
-                                if position_dict['filters'][0] == 'PASS':
-                                    out = defaultdict(None)
-                                    var_index = 0
-                                    allele_index = 1
-                                    samples_dict = position_dict['samples'][0]
+                        if len(position_dict['filters']) == 1:
+                            if position_dict['filters'][0] == 'PASS':
+                                out = defaultdict(None)
+                                var_index = 0
+                                allele_index = 1
+                                samples_dict = position_dict['samples'][0]
 
-                                    out = parseBasicInfo(out, position_dict,samples_dict)
+                                out = parseBasicInfo(out, position_dict,samples_dict)
 
-                                    # Set a minimum coverage of 5X
-                                    if out['CovDepth'] >= 5:
-                                        if 'variants' in position_dict:
-                                            for var_dict in position_dict['variants']:
-                                                out = parseBasicVarInfo(out, var_dict, samples_dict, var_index)
+                                # Set a minimum coverage of 5X
+                                if out['CovDepth'] >= 5:
+                                    if 'variants' in position_dict:
+                                        for var_dict in position_dict['variants']:
+                                            out = parseBasicVarInfo(out, var_dict, samples_dict, var_index)
 
-                                                # Set VAF of 0.35 threshold
-                                                if out.get('VAF') >= 0.35:
-                                                    # Set the 1% Allele Frequency cutoff here using the Controls
-                                                    if out.get('gnomAD_controlsAF') >= 0.005:
-                                                        if 'transcripts' in var_dict:
-                                                            for transcript_dict in var_dict['transcripts']:
-                                                                out = parseTranscriptInfo(out, transcript_dict)
-                                                                writer.write(out)
-                                                        else:
+                                            # Set VAF of 0.35 threshold
+                                            if out.get('VAF') >= 0.35:
+                                                # Set the 1% Allele Frequency cutoff here using the Controls
+                                                if out.get('gnomAD_controlsAF') >= 0.005:
+                                                    if 'transcripts' in var_dict:
+                                                        for transcript_dict in var_dict['transcripts']:
+                                                            out = parseTranscriptInfo(out, transcript_dict)
                                                             writer.write(out)
+                                                    else:
+                                                        writer.write(out)
 
-                                                var_index += 1
-                                                allele_index += 1
-                                    else:
-                                        sys.stderr.write(f"Position in Annotated JSON with no Variant entries: {out['Chr']}-{out['Pos']}-{out['Ref']}\n")
+                                            var_index += 1
+                                            allele_index += 1
+                                else:
+                                    sys.stderr.write(f"Position in Annotated JSON with no Variant entries: {out['Chr']}-{out['Pos']}-{out['Ref']}\n")
 
 
 
