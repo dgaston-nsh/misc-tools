@@ -235,7 +235,18 @@ def parseTranscriptInfo(out,transcript_dict):
 
     return out
 
-def parseNirvana(sample_id, file, output_fname, log_fname):
+def parseNirvana(sample_id):
+    main_dir = os.getcwd()
+    output_dir = os.path.join(main_dir, "ParsedVariantReports")
+    
+    sample_output_dir = os.path.join(main_dir, f"{sample_id}")
+
+    json_fname = get_json_variants_fname(sample_id, sample_output_dir)
+    output_fname = get_output_csv_file(sample_id, output_dir)
+
+    log_fname = os.path.join(sample_output_dir, f"{sample_id}.variant_parsing.log")
+    sys.stdout.write(f"Parsing {json_fname}\n")
+
     output_header = get_output_header()
 
     is_header_line = True
@@ -348,12 +359,4 @@ if __name__ == "__main__":
     with open(args.samples, 'r') as input:
         reader = csv.DictReader(input, delimiter=',', quotechar='"')
         for row in reader:
-            sample_output_dir = os.path.join(main_dir, f"{row['sampleID']}")
-
-            json_fname = get_json_variants_fname(row['sampleID'], sample_output_dir)
-            output_fname = get_output_csv_file(row['sampleID'], output_dir)
-
-            log_fname = os.path.join(sample_output_dir, f"{row['sampleID']}.variant_parsing.log")
-            sys.stdout.write(f"Parsing {json_fname}\n")
-
-            parseNirvana(row['sampleID'], json_fname, output_fname, log_fname)
+            parseNirvana(row['sampleID'])
