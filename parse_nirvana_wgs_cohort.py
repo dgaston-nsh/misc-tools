@@ -128,7 +128,7 @@ def parsePopAFs(var_dict, out):
 
     if 'gnomad' in var_dict:
         gnomad_dict = var_dict['gnomad']
-        out['gnomAD_allAF'] = gnomad_dict['allAf']
+        out['gnomAD_allAf'] = gnomad_dict['allAf']
         largest_af = 0.0
         for pop in gnomad_populations:
             try:
