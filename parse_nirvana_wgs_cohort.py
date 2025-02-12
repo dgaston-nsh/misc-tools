@@ -339,7 +339,7 @@ if __name__ == "__main__":
             sample_output_dir = os.path.join(main_dir, f"{row['sampleID']}_wgs")
 
             json_fname = get_json_variants_fname(row['sampleID'], sample_output_dir)
-            output_fname = get_output_csv_file(row['sampleID'], sample_output_dir)
+            output_fname = get_output_csv_file(row['sampleID'], output_dir)
 
             log_fname = os.path.join(sample_output_dir, f"{row['sampleID']}.variant_parsing.log")
             sys.stdout.write(f"Parsing {json_fname}\n")
