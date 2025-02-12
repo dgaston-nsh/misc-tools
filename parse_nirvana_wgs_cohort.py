@@ -10,6 +10,7 @@ import argparse
 import resource
 import xlsxwriter
 
+from multiprocessing import Pool
 from collections import defaultdict
 
 def get_json_variants_fname(sample_id, sample_dir):
@@ -23,9 +24,10 @@ def get_output_csv_file(sample_id, output_dir):
     return filename
 
 def get_output_header():
-    header = ['VarID', 'Chr', 'Pos', 'Ref', 'Alt', 'Gene', 'TranscriptID', 'c.HGVS', 'p.HGVS',
-    'biotype', 'Consequence', 'ProteinID', 'CovDepth', 'Filters', 'RefDepth', 'AltDepth', 'VAF', 'dbSNP',
-    'COSMIC_ID', 'COSMIC_NumSamples', 'ClinVarID', 'ClinVarSig', 'Clingen_IDs',
+    header = ['VarID', 'Chr', 'Pos', 'Ref', 'Alt', 'genotype', 'genotypeQuality',
+    'Gene', 'TranscriptID', 'c.HGVS', 'p.HGVS', 'biotype', 'Consequence', 'ProteinID',
+    'CovDepth', 'Filters', 'RefDepth', 'AltDepth', 'VAF', 'dbSNP', 'COSMIC_ID',
+    'COSMIC_NumSamples', 'ClinVarID', 'ClinVarSig', 'Clingen_IDs',
     'gnomAD_allAf', 'gnomAD_maleAf', 'gnomAD_femaleAf', 'gnomAD_afrAf', 'gnomAD_amrAf',
     'gnomAD_easAf', 'gnomAD_sasAf', 'gnomAD_finAf', 'gnomAD_nfeAf', 'gnomAD_asjAf', 'gnomAD_othAf',
     'gnomAD_controlsAllAf', 'gnomAD_largestAF', 'TopMed_allAF', 'PrimateAI_ScorePercentile', 'PhyloP',
@@ -45,6 +47,12 @@ def parseBasicInfo(out, position_dict,samples_dict):
 
     if 'alleleDepths' in samples_dict:
         out['RefDepth'] = samples_dict['alleleDepths'][0]
+
+    if 'genotype' in samples_dict:
+        out['genotype'] = samples_dict['genotype']
+
+    if 'genotypeQuality' in samples_dict:
+        out['genotypeQuality'] = samples_dict['genotypeQuality']
 
     return out
 
@@ -323,9 +331,13 @@ def parseNirvana(sample_id, file, output_fname, log_fname):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('-s', '--samples', help="Input file for samples")
+    parser.add_argument('-t', '--threads', help="Number of Threads", default=1)
 
     args = parser.parse_args()
     args.logLevel = "INFO"
+
+    pool = Pool(int(args.threads))
+    commands = list()
 
     main_dir = os.getcwd()
     output_dir = os.path.join(main_dir, "ParsedVariantReports")
