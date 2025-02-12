@@ -267,7 +267,7 @@ def parseNirvana(sample_id):
         writer = csv.DictWriter(output, fieldnames=output_header)
         writer.writeheader()
         with open(log_fname, 'w') as logfile:
-            with gzip.open(file, 'rt') as f:
+            with gzip.open(json_fname, 'rt') as f:
                 data['position_count'] = 0
                 data['gene_count'] = 0
 
