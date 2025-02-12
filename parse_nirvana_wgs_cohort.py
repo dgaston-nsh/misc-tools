@@ -134,7 +134,6 @@ def parsePopAFs(var_dict, out):
             try:
                 freq = float(gnomad_dict.get(pop))
             except:
-                print("Setting gnomad pop to 0.0")
                 freq = 0.0
             out[f"gnomAD_{pop}"] = freq
 
@@ -291,7 +290,7 @@ def parseNirvana(sample_id, file, output_fname):
                                             # Set VAF of 0.35 threshold
                                             if out.get('VAF') >= 0.35:
                                                 # Set the 1% Allele Frequency cutoff here using the Controls
-                                                if out.get('gnomAD_controlsAF') >= 0.005:
+                                                if out.get('gnomAD_controlsAllAf') >= 0.005:
                                                     if 'transcripts' in var_dict:
                                                         for transcript_dict in var_dict['transcripts']:
                                                             out = parseTranscriptInfo(out, transcript_dict)
