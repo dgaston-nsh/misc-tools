@@ -26,10 +26,10 @@ def get_output_header():
     header = ['VarID', 'Chr', 'Pos', 'Ref', 'Alt', 'Gene', 'TranscriptID', 'c.HGVS', 'p.HGVS',
     'biotype', 'Consequence', 'ProteinID', 'CovDepth', 'Filters', 'RefDepth', 'AltDepth', 'VAF', 'dbSNP',
     'COSMIC_IDs', 'COSMIC_NumSamples', 'ClinVar_IDs', 'ClinVarSig', 'Clingen_IDs',
-    'gnomAD_allAF', 'gnomAD_maleAf', 'gnomAD_femaleAf', 'gnomAD_afrAf', 'gnomAD_amrAf',
-    'gnomAD_easAf', 'gnomAD_finAf', 'gnomAD_nfeAf', 'gnomAD_asjAf', 'gnomAD_othAf',
-    'gnomAD_controlsAllAf', 'gnomAD_largestAF', 'topmed_allAf', 'PrimateAI_ScorePercentile', 'PhyloP',
-    'PolyPhenScore', 'PolyPhenPred', 'SiftScore', 'SiftPred', 'REVEL',
+    'gnomAD_allAf', 'gnomAD_maleAf', 'gnomAD_femaleAf', 'gnomAD_afrAf', 'gnomAD_amrAf',
+    'gnomAD_easAf', 'gnomAD_sasAf', 'gnomAD_finAf', 'gnomAD_nfeAf', 'gnomAD_asjAf', 'gnomAD_othAf',
+    'gnomAD_controlsAllAf', 'gnomAD_largestAF', 'TopMed_allAF', 'PrimateAI_ScorePercentile', 'PhyloP',
+    'polyPhenScore', 'polyPhenPred', 'siftScore', 'siftPred', 'REVEL',
     'SpliceAI_accGainScore', 'SpliceAI_accLossScore', 'SpliceAI_donGainScore', 'SpliceAI_donLossScore', 'g.HGVS']
 
     return header
