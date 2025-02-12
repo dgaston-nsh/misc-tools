@@ -134,15 +134,15 @@ def parsePopAFs(var_dict, out):
             try:
                 freq = float(gnomad_dict.get(pop))
             except:
-                freq = 0
+                freq = 0.0
             out[f"gnomAD_{pop}"] = freq
 
             if freq > largest_af:
                 largest_af = freq
         out['gnomAD_largestAF'] = largest_af
     else:
-        out['gnomAD_allAF'] = 0.0
-        out['gnomAD_largestAF'] = 0.0
+        for pop in gnomad_populations:
+            out[f"gnomAD_{pop}"] = 0.0
 
     if 'topmed' in var_dict:
         topmed_dict = var_dict['topmed']
