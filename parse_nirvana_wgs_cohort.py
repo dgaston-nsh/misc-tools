@@ -14,7 +14,7 @@ from multiprocessing import Pool
 from collections import defaultdict
 
 def get_json_variants_fname(sample_id, sample_dir):
-    annotated_json = os.path.join(sample_dir, f"{sample_id}.json.gz")
+    annotated_json = os.path.join(sample_dir, f"{sample_id}_wgs.hard-filtered.vcf.annotated.json.gz")
 
     return annotated_json
 
@@ -239,7 +239,7 @@ def parseNirvana(sample_id):
     main_dir = os.getcwd()
     output_dir = os.path.join(main_dir, "ParsedVariantReports")
 
-    sample_output_dir = os.path.join(main_dir, f"{sample_id}")
+    sample_output_dir = os.path.join(main_dir, f"{sample_id}_wgs")
 
     json_fname = get_json_variants_fname(sample_id, sample_output_dir)
     output_fname = get_output_csv_file(sample_id, output_dir)
@@ -317,7 +317,7 @@ def parseNirvana(sample_id):
                                                 out = parseBasicVarInfo(out, var_dict, samples_dict, var_index, allele_index)
 
                                                 # Set VAF of 0.35 threshold
-                                                if out.get('VAF') >= 0.2:
+                                                if out.get('VAF') >= 0.35:
                                                     # Set the 1% Allele Frequency cutoff here using the Controls
                                                     if out.get('gnomAD_controlsAllAf') <= 0.005:
                                                         if 'transcripts' in var_dict:
