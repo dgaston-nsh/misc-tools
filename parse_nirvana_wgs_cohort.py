@@ -273,6 +273,9 @@ def parseNirvana(sample_id, file, output_fname, log_fname):
                             # data['positions'].append(position_dict)
                             data['position_count'] += 1
 
+                            if data['position_count'] % 1000 == 0:
+                                sys.stdout.write(f"Processed {data['position_count']} positions\n")
+
                             if len(position_dict['filters']) == 1:
                                 if position_dict['filters'][0] == 'PASS':
                                     out = defaultdict(None)
