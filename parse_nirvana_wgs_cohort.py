@@ -13,7 +13,7 @@ import xlsxwriter
 from collections import defaultdict
 
 def get_json_variants_fname(sample_id, sample_dir):
-    annotated_json = os.path.join(sample_dir, f"{sample_id}.hard-filtered.vcf.annotated.json.gz")
+    annotated_json = os.path.join(sample_dir, f"{sample_id}.json.gz")
 
     return annotated_json
 
@@ -336,7 +336,7 @@ if __name__ == "__main__":
     with open(args.samples, 'r') as input:
         reader = csv.DictReader(input, delimiter=',', quotechar='"')
         for row in reader:
-            sample_output_dir = os.path.join(main_dir, f"{row['sampleID']}_wgs")
+            sample_output_dir = os.path.join(main_dir, f"{row['sampleID']}")
 
             json_fname = get_json_variants_fname(row['sampleID'], sample_output_dir)
             output_fname = get_output_csv_file(row['sampleID'], output_dir)
