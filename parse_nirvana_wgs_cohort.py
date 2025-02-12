@@ -25,7 +25,7 @@ def get_output_csv_file(sample_id, output_dir):
 def get_output_header():
     header = ['VarID', 'Chr', 'Pos', 'Ref', 'Alt', 'Gene', 'TranscriptID', 'c.HGVS', 'p.HGVS',
     'biotype', 'Consequence', 'ProteinID', 'CovDepth', 'Filters', 'RefDepth', 'AltDepth', 'VAF', 'dbSNP',
-    'COSMIC_ID', 'COSMIC_NumSamples', 'ClinVar_IDs', 'ClinVarSig', 'Clingen_IDs',
+    'COSMIC_ID', 'COSMIC_NumSamples', 'ClinVarID', 'ClinVarSig', 'Clingen_IDs',
     'gnomAD_allAf', 'gnomAD_maleAf', 'gnomAD_femaleAf', 'gnomAD_afrAf', 'gnomAD_amrAf',
     'gnomAD_easAf', 'gnomAD_sasAf', 'gnomAD_finAf', 'gnomAD_nfeAf', 'gnomAD_asjAf', 'gnomAD_othAf',
     'gnomAD_controlsAllAf', 'gnomAD_largestAF', 'TopMed_allAF', 'PrimateAI_ScorePercentile', 'PhyloP',
@@ -227,7 +227,7 @@ def parseTranscriptInfo(out,transcript_dict):
 
     return out
 
-def parseNirvana(sample_id, file, output_fname):
+def parseNirvana(sample_id, file, output_fname, log_fname):
     output_header = get_output_header()
 
     is_header_line = True
@@ -247,67 +247,69 @@ def parseNirvana(sample_id, file, output_fname):
     with open(output_fname, 'w') as output:
         writer = csv.DictWriter(output, fieldnames=output_header)
         writer.writeheader()
-        with gzip.open(file, 'rt') as f:
-            data['position_count'] = 0
-            data['gene_count'] = 0
+        with open(log_fname, 'w') as logfile:
+            with gzip.open(file, 'rt') as f:
+                data['position_count'] = 0
+                data['gene_count'] = 0
 
-            for line in f:
-                trimmed_line = line.strip()
-                if is_header_line:
-                    data['header'] = trimmed_line[10:-14]
-                    header_dict = json.loads(data['header'])
-                    data['samples'] = header_dict['samples']
-                    is_header_line = False
-                    is_position_line = True
-                    continue
-                if trimmed_line == gene_section_line:
-                    is_gene_line = True
-                    is_position_line = False
-                    continue
-                elif trimmed_line == end_line:
-                    break
-                else:
-                    if is_position_line:
-                        position_dict = json.loads(trimmed_line.rstrip(','))
-                        # data['positions'].append(position_dict)
-                        data['position_count'] += 1
+                for line in f:
+                    trimmed_line = line.strip()
+                    if is_header_line:
+                        data['header'] = trimmed_line[10:-14]
+                        header_dict = json.loads(data['header'])
+                        data['samples'] = header_dict['samples']
+                        is_header_line = False
+                        is_position_line = True
+                        continue
+                    if trimmed_line == gene_section_line:
+                        is_gene_line = True
+                        is_position_line = False
+                        continue
+                    elif trimmed_line == end_line:
+                        break
+                    else:
+                        if is_position_line:
+                            position_dict = json.loads(trimmed_line.rstrip(','))
+                            # data['positions'].append(position_dict)
+                            data['position_count'] += 1
 
-                        if len(position_dict['filters']) == 1:
-                            if position_dict['filters'][0] == 'PASS':
-                                out = defaultdict(None)
-                                var_index = 0
-                                allele_index = 1
-                                samples_dict = position_dict['samples'][0]
+                            if len(position_dict['filters']) == 1:
+                                if position_dict['filters'][0] == 'PASS':
+                                    out = defaultdict(None)
+                                    var_index = 0
+                                    allele_index = 1
+                                    samples_dict = position_dict['samples'][0]
 
-                                out = parseBasicInfo(out, position_dict,samples_dict)
+                                    out = parseBasicInfo(out, position_dict,samples_dict)
 
-                                # Set a minimum coverage of 5X
-                                if out['CovDepth'] >= 5:
-                                    if 'variants' in position_dict:
-                                        for var_dict in position_dict['variants']:
-                                            out = parseBasicVarInfo(out, var_dict, samples_dict, var_index, allele_index)
+                                    # Set a minimum coverage of 5X
+                                    if out['CovDepth'] >= 5:
+                                        if 'variants' in position_dict:
+                                            for var_dict in position_dict['variants']:
+                                                out = parseBasicVarInfo(out, var_dict, samples_dict, var_index, allele_index)
 
-                                            # Set VAF of 0.35 threshold
-                                            if out.get('VAF') >= 0.35:
-                                                # Set the 1% Allele Frequency cutoff here using the Controls
-                                                if out.get('gnomAD_controlsAllAf') >= 0.005:
-                                                    if 'transcripts' in var_dict:
-                                                        for transcript_dict in var_dict['transcripts']:
-                                                            out = parseTranscriptInfo(out, transcript_dict)
+                                                # Set VAF of 0.35 threshold
+                                                if out.get('VAF') >= 0.35:
+                                                    # Set the 1% Allele Frequency cutoff here using the Controls
+                                                    if out.get('gnomAD_controlsAllAf') >= 0.005:
+                                                        if 'transcripts' in var_dict:
+                                                            for transcript_dict in var_dict['transcripts']:
+                                                                out = parseTranscriptInfo(out, transcript_dict)
+                                                                writer.writerow(out)
+                                                        else:
                                                             writer.writerow(out)
-                                                    else:
-                                                        writer.writerow(out)
 
-                                            var_index += 1
-                                            allele_index += 1
-                                else:
-                                    sys.stderr.write(f"Position in Annotated JSON with no Variant entries: {out['Chr']}-{out['Pos']}-{out['Ref']}\n")
-
+                                                var_index += 1
+                                                allele_index += 1
+                                    else:
+                                        # sys.stderr.write(f"Position in Annotated JSON with no Variant entries: {out['Chr']}-{out['Pos']}-{out['Ref']}\n")
+                                        logfile.write(f"Position in Annotated JSON with no Variant entries: {out['Chr']}-{out['Pos']}-{out['Ref']}\n")
 
 
-                    if is_gene_line:
-                        data['genes'].append(trimmed_line.rstrip(','))
-                        data['gene_count'] += 1
+
+                        if is_gene_line:
+                            data['genes'].append(trimmed_line.rstrip(','))
+                            data['gene_count'] += 1
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -329,6 +331,8 @@ if __name__ == "__main__":
 
             json_fname = get_json_variants_fname(row['sampleID'], sample_output_dir)
             output_fname = get_output_csv_file(row['sampleID'], sample_output_dir)
+
+            log_fname = os.path.join(sample_output_dir, f"{sample_id}.variant_parsing.log")
             sys.stdout.write(f"Parsing {json_fname}\n")
 
-            parseNirvana(row['sampleID'], json_fname, output_fname)
+            parseNirvana(row['sampleID'], json_fname, output_fname, log_fname)
