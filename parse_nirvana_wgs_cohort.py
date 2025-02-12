@@ -273,7 +273,7 @@ def parseNirvana(sample_id, file, output_fname, log_fname):
                             # data['positions'].append(position_dict)
                             data['position_count'] += 1
 
-                            if data['position_count'] % 1000 == 0:
+                            if data['position_count'] % 100000 == 0:
                                 sys.stdout.write(f"Processed {data['position_count']} positions\n")
 
                             if len(position_dict['filters']) == 1:
@@ -300,7 +300,7 @@ def parseNirvana(sample_id, file, output_fname, log_fname):
                                                 # Set VAF of 0.35 threshold
                                                 if out.get('VAF') >= 0.35:
                                                     # Set the 1% Allele Frequency cutoff here using the Controls
-                                                    if out.get('gnomAD_controlsAllAf') >= 0.005:
+                                                    if out.get('gnomAD_controlsAllAf') <= 0.005:
                                                         if 'transcripts' in var_dict:
                                                             for transcript_dict in var_dict['transcripts']:
                                                                 out = parseTranscriptInfo(out, transcript_dict)
