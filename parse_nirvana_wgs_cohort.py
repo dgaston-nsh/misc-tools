@@ -294,9 +294,9 @@ def parseNirvana(sample_id, file, output_fname):
                                                     if 'transcripts' in var_dict:
                                                         for transcript_dict in var_dict['transcripts']:
                                                             out = parseTranscriptInfo(out, transcript_dict)
-                                                            writer.write(out)
+                                                            writer.writerow(out)
                                                     else:
-                                                        writer.write(out)
+                                                        writer.writerow(out)
 
                                             var_index += 1
                                             allele_index += 1
