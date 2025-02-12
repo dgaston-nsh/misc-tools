@@ -48,7 +48,7 @@ def parseBasicInfo(out, position_dict,samples_dict):
 
     return out
 
-def parseBasicVarInfo(out, var_dict, samples_dict, var_index):
+def parseBasicVarInfo(out, var_dict, samples_dict, var_index, allele_index):
     out['Alt'] = var_dict['altAllele']
     out['VarID'] = var_dict['vid']
 
@@ -280,7 +280,7 @@ def parseNirvana(sample_id, file, output_fname):
                                 if out['CovDepth'] >= 5:
                                     if 'variants' in position_dict:
                                         for var_dict in position_dict['variants']:
-                                            out = parseBasicVarInfo(out, var_dict, samples_dict, var_index)
+                                            out = parseBasicVarInfo(out, var_dict, samples_dict, var_index, allele_index)
 
                                             # Set VAF of 0.35 threshold
                                             if out.get('VAF') >= 0.35:
