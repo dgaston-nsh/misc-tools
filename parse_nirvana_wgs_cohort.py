@@ -238,7 +238,7 @@ def parseTranscriptInfo(out,transcript_dict):
 def parseNirvana(sample_id):
     main_dir = os.getcwd()
     output_dir = os.path.join(main_dir, "ParsedVariantReports")
-    
+
     sample_output_dir = os.path.join(main_dir, f"{sample_id}")
 
     json_fname = get_json_variants_fname(sample_id, sample_output_dir)
@@ -356,7 +356,10 @@ if __name__ == "__main__":
     if os.path.isdir(output_dir) is False:
         os.mkdir(output_dir)
 
+    samples = list()
     with open(args.samples, 'r') as input:
         reader = csv.DictReader(input, delimiter=',', quotechar='"')
         for row in reader:
-            parseNirvana(row['sampleID'])
+            samples.append(row['sampleID'])
+
+    results = pool.map(parseNirvana, samples)
