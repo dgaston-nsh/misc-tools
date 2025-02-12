@@ -44,7 +44,7 @@ def parseBasicInfo(out, position_dict,samples_dict):
         out['CovDepth'] = samples_dict['totalDepth']
 
     if 'alleleDepths' in samples_dict:
-                    out['RefDepth'] = samples_dict['alleleDepths'][0]
+        out['RefDepth'] = samples_dict['alleleDepths'][0]
 
     return out
 
@@ -286,7 +286,13 @@ def parseNirvana(sample_id, file, output_fname, log_fname):
                                     out = parseBasicInfo(out, position_dict,samples_dict)
 
                                     # Set a minimum coverage of 5X
-                                    if out['CovDepth'] >= 5:
+                                    try:
+                                        depth = int(out.get('CovDepth'))
+                                    except:
+                                        depth = -1
+                                        logfile.write(f"No Coverage vale for variant at position: {out['Chr']}-{out['Pos']}-{out['Ref']}\n")
+
+                                    if depth >= 5:
                                         if 'variants' in position_dict:
                                             for var_dict in position_dict['variants']:
                                                 out = parseBasicVarInfo(out, var_dict, samples_dict, var_index, allele_index)
