@@ -140,10 +140,15 @@ def parsePopAFs(var_dict, out):
             if freq > largest_af:
                 largest_af = freq
         out['gnomAD_largestAF'] = largest_af
+    else:
+        out['gnomAD_allAF'] = 0.0
+        out['gnomAD_largestAF'] = 0.0
 
     if 'topmed' in var_dict:
         topmed_dict = var_dict['topmed']
         out['TopMed_allAF'] = float(topmed_dict['allAf'])
+    else:
+        out['TopMed_allAF'] = 0.0
 
     return out
 
