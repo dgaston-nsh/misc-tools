@@ -327,4 +327,4 @@ if __name__ == "__main__":
             output_fname = get_output_csv_file(row['sampleID'], sample_output_dir)
             sys.stdout.write(f"Parsing {json_fname}\n")
 
-            parseNirvana(sample_id, json_fname, output_fname)
+            parseNirvana(row['sampleID'], json_fname, output_fname)
