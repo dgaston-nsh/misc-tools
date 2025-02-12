@@ -134,6 +134,7 @@ def parsePopAFs(var_dict, out):
             try:
                 freq = float(gnomad_dict.get(pop))
             except:
+                print("Setting gnomad pop to 0.0")
                 freq = 0.0
             out[f"gnomAD_{pop}"] = freq
 
