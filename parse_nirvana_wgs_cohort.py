@@ -239,7 +239,7 @@ def parseNirvana(sample_id, file, output_fname):
     # data['positions'] = []
     data['genes'] = []
 
-    with open(fname, 'w') as output:
+    with open(output_fname, 'w') as output:
         writer = csv.DictWriter(output, fieldnames=output_header)
         writer.writeheader()
         with gzip.open(file, 'rt') as f:
