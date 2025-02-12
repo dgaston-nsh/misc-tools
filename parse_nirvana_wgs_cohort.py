@@ -25,7 +25,7 @@ def get_output_csv_file(sample_id, output_dir):
 def get_output_header():
     header = ['VarID', 'Chr', 'Pos', 'Ref', 'Alt', 'Gene', 'TranscriptID', 'c.HGVS', 'p.HGVS',
     'biotype', 'Consequence', 'ProteinID', 'CovDepth', 'Filters', 'RefDepth', 'AltDepth', 'VAF', 'dbSNP',
-    'COSMIC_IDs', 'COSMIC_NumSamples', 'ClinVar_IDs', 'ClinVarSig', 'Clingen_IDs',
+    'COSMIC_ID', 'COSMIC_NumSamples', 'ClinVar_IDs', 'ClinVarSig', 'Clingen_IDs',
     'gnomAD_allAf', 'gnomAD_maleAf', 'gnomAD_femaleAf', 'gnomAD_afrAf', 'gnomAD_amrAf',
     'gnomAD_easAf', 'gnomAD_sasAf', 'gnomAD_finAf', 'gnomAD_nfeAf', 'gnomAD_asjAf', 'gnomAD_othAf',
     'gnomAD_controlsAllAf', 'gnomAD_largestAF', 'TopMed_allAF', 'PrimateAI_ScorePercentile', 'PhyloP',
