@@ -340,7 +340,7 @@ def parseNirvana(sample_id):
                                                             if gene not in gene_list:
                                                                 gene_list.append(gene)
 
-                                                        out['Gene and Transcript Info'] = ";".join(info_strings)
+                                                        out['Transcript Info'] = ";".join(info_strings)
                                                         out['polyPhenScore'] = ";".join(polyPhenScore_list)
                                                         out['polyPhenPred'] = ";".join(polyPhenPred_list)
                                                         out['siftScore'] = ";".join(siftScore_list)
