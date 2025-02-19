@@ -24,8 +24,8 @@ def get_output_csv_file(sample_id, output_dir):
     return filename
 
 def get_output_header():
-    header = ['VarID', 'Chr', 'Pos', 'Ref', 'Alt', 'genotype', 'genotypeQuality',
-    'Gene and Transcript Info', 'CovDepth', 'Filters', 'RefDepth', 'AltDepth', 'VAF', 'dbSNP', 'COSMIC_ID',
+    header = ['VarID', 'Chr', 'Pos', 'Ref', 'Alt', 'genotype', 'genotypeQuality', 'Gene(s)',
+    'Transcript Info', 'CovDepth', 'Filters', 'RefDepth', 'AltDepth', 'VAF', 'dbSNP', 'COSMIC_ID',
     'COSMIC_NumSamples', 'ClinVarID', 'ClinVarSig', 'Clingen_IDs',
     'gnomAD_allAf', 'gnomAD_maleAf', 'gnomAD_femaleAf', 'gnomAD_afrAf', 'gnomAD_amrAf',
     'gnomAD_easAf', 'gnomAD_sasAf', 'gnomAD_finAf', 'gnomAD_nfeAf', 'gnomAD_asjAf', 'gnomAD_othAf',
@@ -234,7 +234,7 @@ def parseTranscriptInfo(transcript_dict):
 
     info_string = f"{gene}|{transcriptID}|{c_HGVS}|{proteinID}|{p_HGVS}|{biotype}|{consequence}"
 
-    return (info_string, polyPhenScore, polyPhenPred, siftScore, siftPred)
+    return (info_string, gene, polyPhenScore, polyPhenPred, siftScore, siftPred)
 
 def parseNirvana(sample_id):
     main_dir = os.getcwd()
@@ -322,13 +322,14 @@ def parseNirvana(sample_id):
                                                 if out.get('gnomAD_controlsAllAf') <= 0.005:
                                                     if 'transcripts' in var_dict:
                                                         info_strings = list()
+                                                        gene_list = list()
                                                         polyPhenScore_list = list()
                                                         polyPhenPred_list = list()
                                                         siftScore_list = list()
                                                         siftPred_list = list()
 
                                                         for transcript_dict in var_dict['transcripts']:
-                                                            (info_string, polyPhenScore, polyPhenPred, siftScore, siftPred) = parseTranscriptInfo(transcript_dict)
+                                                            (info_string, gene, polyPhenScore, polyPhenPred, siftScore, siftPred) = parseTranscriptInfo(transcript_dict)
 
                                                             info_strings.append(info_string)
                                                             polyPhenScore_list.append(f"{polyPhenScore}")
@@ -336,11 +337,15 @@ def parseNirvana(sample_id):
                                                             siftScore_list.append(f"{siftScore}")
                                                             siftPred_list.append(f"{siftPred}")
 
+                                                            if gene not in gene_list:
+                                                                gene_list.append(gene)
+
                                                         out['Gene and Transcript Info'] = ";".join(info_strings)
                                                         out['polyPhenScore'] = ";".join(polyPhenScore_list)
                                                         out['polyPhenPred'] = ";".join(polyPhenPred_list)
                                                         out['siftScore'] = ";".join(siftScore_list)
                                                         out['siftPred'] = ";".join(siftPred_list)
+                                                        out['Gene(s)'] = ";".join(gene_list)
 
                                                         writer.writerow(out)
                                                     else:
