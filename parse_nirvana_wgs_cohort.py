@@ -331,10 +331,10 @@ def parseNirvana(sample_id):
                                                             (info_string, polyPhenScore, polyPhenPred, siftScore, siftPred) = parseTranscriptInfo(transcript_dict)
 
                                                             info_strings.append(info_string)
-                                                            polyPhenScore_list.append(polyPhenScore)
-                                                            polyPhenPred_list.append(polyPhenPred)
-                                                            siftScore_list.append(siftScore)
-                                                            siftPred_list.append(siftPred)
+                                                            polyPhenScore_list.append(f"{polyPhenScore}")
+                                                            polyPhenPred_list.append(f"{polyPhenPred}")
+                                                            siftScore_list.append(f"{siftScore}")
+                                                            siftPred_list.append(f"{siftPred}")
 
                                                         out['Gene and Transcript Info'] = ";".join(info_strings)
                                                         out['polyPhenScore'] = ";".join(polyPhenScore_list)
