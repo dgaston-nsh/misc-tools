@@ -25,8 +25,7 @@ def get_output_csv_file(sample_id, output_dir):
 
 def get_output_header():
     header = ['VarID', 'Chr', 'Pos', 'Ref', 'Alt', 'genotype', 'genotypeQuality',
-    'Gene', 'TranscriptID', 'c.HGVS', 'p.HGVS', 'biotype', 'Consequence', 'ProteinID',
-    'CovDepth', 'Filters', 'RefDepth', 'AltDepth', 'VAF', 'dbSNP', 'COSMIC_ID',
+    'Gene and Transcript Info', 'CovDepth', 'Filters', 'RefDepth', 'AltDepth', 'VAF', 'dbSNP', 'COSMIC_ID',
     'COSMIC_NumSamples', 'ClinVarID', 'ClinVarSig', 'Clingen_IDs',
     'gnomAD_allAf', 'gnomAD_maleAf', 'gnomAD_femaleAf', 'gnomAD_afrAf', 'gnomAD_amrAf',
     'gnomAD_easAf', 'gnomAD_sasAf', 'gnomAD_finAf', 'gnomAD_nfeAf', 'gnomAD_asjAf', 'gnomAD_othAf',
@@ -192,48 +191,50 @@ def parseSpliceAI(var_dict, out):
 
     return out
 
-def parseTranscriptInfo(out,transcript_dict):
-    out['Gene'] = transcript_dict['hgnc']
-    out['biotype'] = transcript_dict['bioType']
-    out['Consequence'] = ','.join(transcript_dict['consequence'])
-    out['TranscriptID'] = transcript_dict['transcript']
+def parseTranscriptInfo(transcript_dict):
+    gene = transcript_dict['hgnc']
+    biotype = transcript_dict['bioType']
+    consequence = ','.join(transcript_dict['consequence'])
+    transcriptID = transcript_dict['transcript']
 
     if 'proteinId' in transcript_dict:
-        out['ProteinID'] = transcript_dict['proteinId']
+        proteinID = transcript_dict['proteinId']
     else:
-        out['ProteinID'] = "-"
+        proteinID = "-"
 
     if 'hgvsc' in transcript_dict:
-        out['c.HGVS'] = transcript_dict['hgvsc']
+        c_HGVS = transcript_dict['hgvsc']
     else:
-        out['c.HGVS'] = "-"
+        c_HGVS = "-"
 
     if 'hgvsp' in transcript_dict:
-        out['p.HGVS'] = transcript_dict['hgvsp']
+        p_HGVS = transcript_dict['hgvsp']
     else:
-        out['p.HGVS'] = "-"
+        p_HGVS = "-"
 
     if 'polyPhenScore' in transcript_dict:
-        out['polyPhenScore'] = transcript_dict['polyPhenScore']
+        polyPhenScor] = transcript_dict['polyPhenScore']
     else:
-        out['polyPhenScore'] = '-'
+        polyPhenScore = '-'
 
     if 'polyPhenPred' in transcript_dict:
-        out['polyPhenPred'] = transcript_dict['polyPhenPred']
+        polyPhenPred = transcript_dict['polyPhenPred']
     else:
-        out['polyPhenPred'] = '-'
+        polyPhenPred = '-'
 
     if 'siftScore' in transcript_dict:
-        out['siftScore'] = transcript_dict['siftScore']
+        siftScore = transcript_dict['siftScore']
     else:
-        out['siftScore'] = '-'
+        siftScore = '-'
 
     if 'siftPred' in transcript_dict:
-        out['siftPred'] = transcript_dict['siftPrediction']
+        siftPred = transcript_dict['siftPrediction']
     else:
-        out['siftPred'] = '-'
+        siftPred = '-'
 
-    return out
+    info_string = f"{gene}|{transcriptID}|{c_HGVS}|{proteinID}|{p_HGVS}|{biotype}|{consequence}"
+
+    return (info_string, polyPhenScore, polyPhenPred, siftScore, siftPred)
 
 def parseNirvana(sample_id):
     main_dir = os.getcwd()
@@ -295,43 +296,61 @@ def parseNirvana(sample_id):
                             if data['position_count'] % 100000 == 0:
                                 sys.stdout.write(f"Processed {data['position_count']} positions\n")
 
-                            if len(position_dict['filters']) == 1:
-                                if position_dict['filters'][0] == 'PASS':
-                                    out = defaultdict(None)
-                                    var_index = 0
-                                    allele_index = 1
-                                    samples_dict = position_dict['samples'][0]
+                            if position_dict['filters'][0] == 'PASS':
+                                out = defaultdict(None)
+                                var_index = 0
+                                allele_index = 1
+                                samples_dict = position_dict['samples'][0]
 
-                                    out = parseBasicInfo(out, position_dict,samples_dict)
+                                out = parseBasicInfo(out, position_dict,samples_dict)
 
-                                    # Set a minimum coverage of 5X
-                                    try:
-                                        depth = int(out.get('CovDepth'))
-                                    except:
-                                        depth = -1
-                                        logfile.write(f"No Coverage vale for variant at position: {out['Chr']}-{out['Pos']}-{out['Ref']}\n")
+                                # Set a minimum coverage of 5X
+                                try:
+                                    depth = int(out.get('CovDepth'))
+                                except:
+                                    depth = -1
+                                    logfile.write(f"No Coverage vale for variant at position: {out['Chr']}-{out['Pos']}-{out['Ref']}\n")
 
-                                    if depth >= 10:
-                                        if 'variants' in position_dict:
-                                            for var_dict in position_dict['variants']:
-                                                out = parseBasicVarInfo(out, var_dict, samples_dict, var_index, allele_index)
+                                if depth >= 10:
+                                    if 'variants' in position_dict:
+                                        for var_dict in position_dict['variants']:
+                                            out = parseBasicVarInfo(out, var_dict, samples_dict, var_index, allele_index)
 
-                                                # Set VAF of 0.35 threshold
-                                                if out.get('VAF') >= 0.35:
-                                                    # Set the 1% Allele Frequency cutoff here using the Controls
-                                                    if out.get('gnomAD_controlsAllAf') <= 0.005:
-                                                        if 'transcripts' in var_dict:
-                                                            for transcript_dict in var_dict['transcripts']:
-                                                                out = parseTranscriptInfo(out, transcript_dict)
-                                                                writer.writerow(out)
-                                                        else:
-                                                            writer.writerow(out)
+                                            # Set VAF of 0.35 threshold
+                                            if out.get('VAF') >= 0.35:
+                                                # Set the 1% Allele Frequency cutoff here using the Controls
+                                                if out.get('gnomAD_controlsAllAf') <= 0.005:
+                                                    if 'transcripts' in var_dict:
+                                                        info_strings = list()
+                                                        polyPhenScore_list = list()
+                                                        polyPhenPred_list = list()
+                                                        siftScore_list = list()
+                                                        siftPred_list = list()
 
-                                                var_index += 1
-                                                allele_index += 1
-                                    else:
-                                        # sys.stderr.write(f"Position in Annotated JSON with no Variant entries: {out['Chr']}-{out['Pos']}-{out['Ref']}\n")
-                                        logfile.write(f"Position in Annotated JSON with no Variant entries: {out['Chr']}-{out['Pos']}-{out['Ref']}\n")
+                                                        for transcript_dict in var_dict['transcripts']:
+                                                            (info_string, polyPhenScore, polyPhenPred, siftScore, siftPred) = parseTranscriptInfo(out, transcript_dict)
+
+                                                            info_strings.append(info_string)
+                                                            polyPhenScore_list.append(polyPhenScore)
+                                                            polyPhenPred_list.append(polyPhenPred)
+                                                            siftScore_list.append(siftScore)
+                                                            siftPred_list.append(siftPred)
+
+                                                        out['Gene and Transcript Info'] = ";".join(info_strings)
+                                                        out['polyPhenScore'] = ";".join(polyPhenScore_list)
+                                                        out['polyPhenPred'] = ";".join(polyPhenPred_list)
+                                                        out['siftScore'] = ";".join(siftScore_list)
+                                                        out['siftPred'] = ";".join(siftPred_list)
+
+                                                        writer.writerow(out)
+                                                    else:
+                                                        writer.writerow(out)
+
+                                            var_index += 1
+                                            allele_index += 1
+                                else:
+                                    # sys.stderr.write(f"Position in Annotated JSON with no Variant entries: {out['Chr']}-{out['Pos']}-{out['Ref']}\n")
+                                    logfile.write(f"Position in Annotated JSON with no Variant entries: {out['Chr']}-{out['Pos']}-{out['Ref']}\n")
 
 
 
