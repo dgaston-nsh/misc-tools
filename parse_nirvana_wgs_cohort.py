@@ -213,7 +213,7 @@ def parseTranscriptInfo(transcript_dict):
         p_HGVS = "-"
 
     if 'polyPhenScore' in transcript_dict:
-        polyPhenScor] = transcript_dict['polyPhenScore']
+        polyPhenScore = transcript_dict['polyPhenScore']
     else:
         polyPhenScore = '-'
 
