@@ -328,7 +328,7 @@ def parseNirvana(sample_id):
                                                         siftPred_list = list()
 
                                                         for transcript_dict in var_dict['transcripts']:
-                                                            (info_string, polyPhenScore, polyPhenPred, siftScore, siftPred) = parseTranscriptInfo(out, transcript_dict)
+                                                            (info_string, polyPhenScore, polyPhenPred, siftScore, siftPred) = parseTranscriptInfo(transcript_dict)
 
                                                             info_strings.append(info_string)
                                                             polyPhenScore_list.append(polyPhenScore)
