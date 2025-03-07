@@ -319,7 +319,7 @@ def parseNirvana(sample_id):
                                             # Set VAF of 0.35 threshold
                                             if out.get('VAF') >= 0.35:
                                                 # Set the 1% Allele Frequency cutoff here using the Controls
-                                                if out.get('gnomAD_controlsAllAf') <= 0.005:
+                                                if out.get('gnomAD_allAf') <= 0.005:
                                                     if 'transcripts' in var_dict:
                                                         info_strings = list()
                                                         gene_list = list()
