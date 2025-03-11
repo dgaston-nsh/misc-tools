@@ -4,6 +4,7 @@
 import os
 import csv
 import sys
+import glob
 import argparse
 
 from collections import defaultdict
@@ -24,4 +25,20 @@ if __name__ == "__main__":
     args = parser.parse_args()
     args.logLevel = "INFO"
 
-    main_dir = os.getcwd()
+    variant_counts = defaultdict(list)
+    csv_files = glob.glob('*.csv')
+
+    for file in csv_files:
+        with open(file, 'r') as csv_file:
+            elements = csv_file.split('.')
+            sample_id = elements[0]
+            reader = csv.reader(csv_file)
+            for row in reader:
+                variant_counts[row[0]].append(sample_id)
+
+    with open(args.output, 'w') as output:
+        output.write("VarID\tNum Instances\tSamples\n")
+        for varid in variant_counts:
+            count = len(variant_counts[varid])
+            samples_string = "|".join(variant_counts[varid])
+            output.write(f"{varid}\t{count}\t{samples_string}\n")
