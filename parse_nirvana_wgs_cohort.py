@@ -25,8 +25,8 @@ def get_output_csv_file(sample_id, output_dir):
 
 def get_output_header():
     header = ['VarID', 'Chr', 'Pos', 'Ref', 'Alt', 'genotype', 'genotypeQuality', 'Gene(s)',
-    'Transcript Info', 'CovDepth', 'Filters', 'RefDepth', 'AltDepth', 'VAF', 'dbSNP', 'COSMIC_ID',
-    'COSMIC_NumSamples', 'ClinVarID', 'ClinVarSig', 'Clingen_IDs',
+    'MANE Info', 'Transcript Info', 'CovDepth', 'Filters', 'RefDepth', 'AltDepth', 'VAF',
+    'dbSNP', 'COSMIC_ID', 'COSMIC_NumSamples', 'ClinVarID', 'ClinVarSig', 'Clingen_IDs',
     'gnomAD_allAf', 'gnomAD_maleAf', 'gnomAD_femaleAf', 'gnomAD_afrAf', 'gnomAD_amrAf',
     'gnomAD_easAf', 'gnomAD_sasAf', 'gnomAD_finAf', 'gnomAD_nfeAf', 'gnomAD_asjAf', 'gnomAD_othAf',
     'gnomAD_controlsAllAf', 'gnomAD_largestAF', 'TopMed_allAF', 'PrimateAI_ScorePercentile', 'PhyloP',
@@ -246,6 +246,12 @@ def parseNirvana(sample_id):
     output_fname = get_output_csv_file(sample_id, output_dir)
 
     log_fname = os.path.join(sample_output_dir, f"{sample_id}.variant_parsing.log")
+
+    # Resource Files and Directory Definitions
+    resource_dir = os.path.abspath("/clin/resources")
+    mane_plus_clinical_ensembl = os.path.join(resource_dir, "mane_select_plus_clinical_ensemblIDs.txt")
+    mane_plus_clinical_refseq = os.path.join(resource_dir, "mane_select_plus_clinical_refseqIDs.txt")
+
     sys.stdout.write(f"Parsing {json_fname}\n")
 
     output_header = get_output_header()
@@ -340,6 +346,13 @@ def parseNirvana(sample_id):
                                                             if gene not in gene_list:
                                                                 gene_list.append(gene)
 
+                                                        for info_string in info_strings:
+                                                            info = info_string.split('|')
+                                                            transcript_id = info[1]
+
+                                                            if info[1] in mane_plus_clinical_ensembl or info[1] in mane_plus_clinical_refseq:
+                                                                out['MANE Info'] = info
+
                                                         out['Transcript Info'] = ";".join(info_strings)
                                                         out['polyPhenScore'] = ";".join(polyPhenScore_list)
                                                         out['polyPhenPred'] = ";".join(polyPhenPred_list)
@@ -376,6 +389,11 @@ if __name__ == "__main__":
 
     main_dir = os.getcwd()
     output_dir = os.path.join(main_dir, "ParsedVariantReports")
+
+    # Resource Files and Directory Definitions
+    resource_dir = os.path.abspath("/clin/resources")
+    mane_plus_clinical_ensembl = os.path.join(resource_dir, "mane_select_plus_clinical_ensemblIDs.txt")
+    mane_plus_clinical_refseq = os.path.join(resource_dir, "mane_select_plus_clinical_refseqIDs.txt")
 
     if os.path.isdir(output_dir) is False:
         os.mkdir(output_dir)
