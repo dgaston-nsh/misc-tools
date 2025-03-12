@@ -30,7 +30,7 @@ if __name__ == "__main__":
 
     for file in csv_files:
         with open(file, 'r') as csv_file:
-            elements = csv_file.split('.')
+            elements = file.split('.')
             sample_id = elements[0]
             reader = csv.reader(csv_file)
             for row in reader:
