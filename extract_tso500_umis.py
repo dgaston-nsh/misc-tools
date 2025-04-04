@@ -9,13 +9,25 @@
 
 # Standard packages
 import os
+import gzip
 import glob
 import HTSeq
 import shutil
 
-def processFastQ(filename, outfilename):
-    with HTSeq.FastqReader(filename) as fq:
-        with open(outfilename, 'w') as fq_out:
+def extractUMIs_paired_end(fastq1, fastq2, outfilename1, outfilename2):
+    with gzip.open(fastq1, 'rt') as fq1:
+        with gzip.open(fastq2, 'rt') as fq2:
+            with gzip.open(outfilename1, 'wt') as out1:
+                with gzip.open(outfilename2, 'wt') as out2:
+                    lines_fq1 = islice(fq1, 4)
+                    lines_fq2 = islice(fq2, 4)
+
+
+
+
+def processFastQ(fastq1, fastq2, outfilename1, outfilename2):
+    with HTSeq.FastqReader(fastq1) as fq1:
+        with open(outfilename1, 'w') as fq_out2:
             for read in fq:
                 umi_record = read[:7]
                 umi_seq = umi_record.read.decode()
