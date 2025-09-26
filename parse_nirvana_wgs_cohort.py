@@ -248,7 +248,7 @@ def parseNirvana(sample_id):
     log_fname = os.path.join(sample_output_dir, f"{sample_id}.variant_parsing.log")
 
     # Resource Files and Directory Definitions
-    resource_dir = os.path.abspath("/clin/resources")
+    resource_dir = os.path.abspath("/home/dgaston/resources")
     mane_plus_clinical_ensembl = os.path.join(resource_dir, "mane_select_plus_clinical_ensemblIDs.txt")
     mane_plus_clinical_refseq = os.path.join(resource_dir, "mane_select_plus_clinical_refseqIDs.txt")
 
