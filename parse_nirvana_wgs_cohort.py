@@ -390,11 +390,6 @@ if __name__ == "__main__":
     main_dir = os.getcwd()
     output_dir = os.path.join(main_dir, "ParsedVariantReports")
 
-    # Resource Files and Directory Definitions
-    resource_dir = os.path.abspath("/clin/resources")
-    mane_plus_clinical_ensembl = os.path.join(resource_dir, "mane_select_plus_clinical_ensemblIDs.txt")
-    mane_plus_clinical_refseq = os.path.join(resource_dir, "mane_select_plus_clinical_refseqIDs.txt")
-
     if os.path.isdir(output_dir) is False:
         os.mkdir(output_dir)
 
