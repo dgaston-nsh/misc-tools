@@ -14,7 +14,8 @@ from multiprocessing import Pool
 from collections import defaultdict
 
 def get_json_variants_fname(sample_id, sample_dir):
-    annotated_json = os.path.join(sample_dir, f"{sample_id}_wgs.hard-filtered.vcf.annotated.json.gz")
+    # annotated_json = os.path.join(sample_dir, f"{sample_id}_wgs.hard-filtered.vcf.annotated.json.gz")
+    annotated_json = os.path.join(sample_dir, f"{sample_id}_wes.hard-filtered.vcf.annotated.json.gz")
 
     return annotated_json
 
@@ -240,7 +241,8 @@ def parseNirvana(sample_id):
     main_dir = os.getcwd()
     output_dir = os.path.join(main_dir, "ParsedVariantReports")
 
-    sample_output_dir = os.path.join(main_dir, f"{sample_id}_wgs")
+    # sample_output_dir = os.path.join(main_dir, f"{sample_id}_wgs")
+    sample_output_dir = os.path.join(main_dir, f"{sample_id}_wes")
 
     json_fname = get_json_variants_fname(sample_id, sample_output_dir)
     output_fname = get_output_csv_file(sample_id, output_dir)
@@ -248,7 +250,8 @@ def parseNirvana(sample_id):
     log_fname = os.path.join(sample_output_dir, f"{sample_id}.variant_parsing.log")
 
     # Resource Files and Directory Definitions
-    resource_dir = os.path.abspath("/home/dgaston/resources")
+    # resource_dir = os.path.abspath("/home/dgaston/resources")
+    resource_dir = os.path.abspath("/usr/local/illumina/runs/Resources/")
     mane_plus_clinical_ensembl = os.path.join(resource_dir, "mane_select_plus_clinical_ensemblIDs.txt")
     mane_plus_clinical_refseq = os.path.join(resource_dir, "mane_select_plus_clinical_refseqIDs.txt")
 
