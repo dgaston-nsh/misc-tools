@@ -15,7 +15,7 @@ from collections import defaultdict
 
 def get_json_variants_fname(sample_id, sample_dir):
     # annotated_json = os.path.join(sample_dir, f"{sample_id}_wgs.hard-filtered.vcf.annotated.json.gz")
-    annotated_json = os.path.join(sample_dir, f"{sample_id}_wes.hard-filtered.vcf.annotated.json.gz")
+    annotated_json = os.path.join(sample_dir, f"{sample_id}_wgs.hard-filtered.vcf.annotated.json.gz")
 
     return annotated_json
 
@@ -242,7 +242,7 @@ def parseNirvana(sample_id):
     output_dir = os.path.join(main_dir, "ParsedVariantReports")
 
     # sample_output_dir = os.path.join(main_dir, f"{sample_id}_wgs")
-    sample_output_dir = os.path.join(main_dir, f"{sample_id}_wes")
+    sample_output_dir = os.path.join(main_dir, f"{sample_id}_wgs")
 
     json_fname = get_json_variants_fname(sample_id, sample_output_dir)
     output_fname = get_output_csv_file(sample_id, output_dir)
